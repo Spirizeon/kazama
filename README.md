@@ -1,6 +1,11 @@
-# Kazama: Ollama Client in Rust 🦀
+<div align="center">
+<img src="https://github.com/Spirizeon/kazama/assets/123345456/4232bc0c-2491-43e3-b602-91c4f4333e45" width="250px" height="auto" />
 
-🤖 Rust client library for interacting with the Ollama API, enabling seamless operations like chat completions, model pulls, embeddings generation, model listing, and model pushes.
+# Kazama
+### Ollama Client in Rust 🦀
+🤖 Rust client library for interacting with the Ollama API, enabling operations like chat completions, model pulls, embeddings generation, model listing, and model pushes.
+</div>
+
 
 ## ✅ **Features:**
 - Chat Completion: `chat_completion(model, content, role)`
@@ -33,4 +38,4 @@ async fn main() {
 ```
 
 For detailed API documentation, refer [here](https://crates.io/crates/kazama/).
-
+Acknowledgement for icon: https://www.artstation.com/artwork/n0q6Ye
