@@ -8,6 +8,7 @@ description = "an ollama wrapper in rust"
 keywords = ["ollama","wrapper"]
 categories = ["command-line-utilities"]
 edition = "2021"
+repository = "https://github.com/spirizeon/kazama"
 
 
 [dependencies]
