@@ -114,7 +114,7 @@ struct emb_request {
     /// }
     /// ```
 #[tokio::main]
-async fn chat_completion(model: &str,content: &str,role: &str) -> Result<(), reqwest::Error>{
+pub async fn chat_completion(model: &str,content: &str,role: &str) -> Result<(), reqwest::Error>{
     let req = chat_request { 
         model: String::from(model),
         messages: vec![
