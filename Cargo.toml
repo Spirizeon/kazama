@@ -4,12 +4,17 @@ version = "0.1.0"
 authors = ["spirizeon"]
 license = "MIT"
 license-file = "LICENSE"
+description = "an ollama wrapper in rust"
 keywords = ["ollama","wrapper"]
 categories = ["command-line-utilities"]
+edition = "2021"
 
 
 [dependencies]
-
+serde = { version = "1.0", features = ["derive"]}
+serde_json = "1.0.120"
+reqwest = { version = "0.12", features = ["json"] }
+tokio = { version = "1", features = ["full"] }
 [profile.dev]
 opt-level = 1
 
