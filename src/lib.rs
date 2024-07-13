@@ -1,125 +1,54 @@
-/// This module provides functions to interact with the Kazama API, facilitating various operations such as
-/// chat completions, model pulls, embeddings generation, model listing, and model pushes.
-///
-/// # Examples
-///
-/// ## Chat Completion
-///
-/// ```
-/// use kazama::{chat_completion};
-///
-/// #[tokio::main]
-/// async fn main() {
-///     chat_completion("model_name", "Hello!", "user").await.expect("Failed to complete chat");
-/// }
-/// ```
-///
-/// ## Model Pull
-///
-/// ```
-/// use kazama::{pull_model};
-///
-/// #[tokio::main]
-/// async fn main() {
-///     pull_model("model_name", false).await.expect("Failed to pull model");
-/// }
-/// ```
-///
-/// ## Generate Embeddings
-///
-/// ```
-/// use kazama::{gen_embeddings};
-///
-/// #[tokio::main]
-/// async fn main() {
-///     gen_embeddings("model_name", "Generate embeddings from this prompt").await.expect("Failed to generate embeddings");
-/// }
-/// ```
-///
-/// ## List Models
-///
-/// ```
-/// use kazama::{list_models};
-///
-/// #[tokio::main]
-/// async fn main() {
-///     list_models().await.expect("Failed to list models");
-/// }
-/// ```
-///
-/// ## Push Models
-///
-/// ```
-/// use kazama::{push_models};
-///
-/// #[tokio::main]
-/// async fn main() {
-///     push_models("model_name", true).await.expect("Failed to push model");
-/// }
-/// ```
-use serde::{Serialize,Deserialize};
-
-
+use serde::{Deserialize, Serialize};
 /// Represents a message structure used in the chat request.
-#[derive(Debug,Serialize,Deserialize)]
-struct Message { 
+#[derive(Debug, Serialize, Deserialize)]
+struct Message {
     role: String,
     content: String,
 }
 
 /// Represents a request to perform a chat completion.
-#[derive(Debug,Serialize,Deserialize)]
-struct chat_request {
+#[derive(Debug, Serialize, Deserialize)]
+struct ChatRequest {
+    /// Name or identifier of the model to use for chat completion
     model: String,
     messages: Vec<Message>,
     stream: bool,
 }
 
 /// Represents a request to pull a model.
-#[derive(Debug,Serialize,Deserialize)]
-struct pull_request {
+#[derive(Debug, Serialize, Deserialize)]
+struct PullRequest {
     name: String,
     stream: bool,
 }
 
 /// Represents a request to generate embeddings.
-#[derive(Debug,Serialize,Deserialize)]
-struct emb_request {
+#[derive(Debug, Serialize, Deserialize)]
+struct EmbRequest {
     model: String,
     prompt: String,
 }
 
 /// Represents a request to push a model.
-#[derive(Debug,Serialize,Deserialize)]
- struct push_request {
+#[derive(Debug, Serialize, Deserialize)]
+struct PushRequest {
     name: String,
     stream: bool,
 }
 
 
-/// Sends a request to complete a chat interaction with the specified model, content, and role.
-    ///
-    /// # Errors
-    ///
-    /// Returns a `reqwest::Error` if the request fails.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use kazama::chat_completion;
-    ///
-    /// #[tokio::main]
-    /// async fn main() {
-    ///     chat_completion("model_name", "Hello!", "user").await.expect("Failed to complete chat");
-    /// }
-    /// ```
+/// Performs a chat completion request.
+///
+/// Sends a chat completion request using the specified model, message content, and role.
+/// Returns an error if the request fails.
 #[tokio::main]
-pub async fn chat_completion(model: &str,content: &str,role: &str) -> Result<(), reqwest::Error>{
-    let req = chat_request { 
+pub async fn chat_completion(model: &str, content: &str, role: &str) -> Result<(), reqwest::Error> {
+    let req = ChatRequest {
         model: String::from(model),
-        messages: vec![
-            Message {role: role.to_string(), content: content.to_string()}
-        ],
+        messages: vec![Message {
+            role: role.to_string(),
+            content: content.to_string(),
+        }],
         stream: false,
     };
 
@@ -129,29 +58,19 @@ pub async fn chat_completion(model: &str,content: &str,role: &str) -> Result<(),
         .send()
         .await?;
     let response_json: serde_json::Value = response.json().await?;
-    println!("{:#?}",response_json);
+    println!("{:#?}", response_json);
     Ok(())
 }
 
- /// Sends a request to pull a model with the specified name and stream mode.
-    ///
-    /// # Errors
-    ///
-    /// Returns a `reqwest::Error` if the request fails.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use kazama::pull_model;
-    ///
-    /// #[tokio::main]
-    /// async fn main() {
-    ///     pull_model("model_name", false).await.expect("Failed to pull model");
-    /// }
-    /// ```
+
+/// Performs a model pull request.
+///
+/// Sends a request to pull a model identified by `name`.
+/// Uses streaming mode if `stream_mode` is true.
+/// Returns an error if the request fails.
 #[tokio::main]
-pub async fn pull_model(name:&str,stream_mode: bool) -> Result<(), reqwest::Error>{
-    let req = pull_request { 
+pub async fn pull_model(name: &str, stream_mode: bool) -> Result<(), reqwest::Error> {
+    let req = PullRequest {
         name: String::from(name),
         stream: stream_mode,
     };
@@ -161,30 +80,17 @@ pub async fn pull_model(name:&str,stream_mode: bool) -> Result<(), reqwest::Erro
         .send()
         .await?;
     let response_json: serde_json::Value = response.json().await?;
-    println!("{:#?}",response_json);
+    println!("{:#?}", response_json);
     Ok(())
 }
 
-
-    /// Sends a request to generate embeddings with the specified model and prompt.
-    ///
-    /// # Errors
-    ///
-    /// Returns a `reqwest::Error` if the request fails.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use kazama::gen_embeddings;
-    ///
-    /// #[tokio::main]
-    /// async fn main() {
-    ///     gen_embeddings("model_name", "Generate embeddings from this prompt").await.expect("Failed to generate embeddings");
-    /// }
-    /// ```
+/// Performs a request to generate embeddings.
+///
+/// Sends a request to generate embeddings using the specified model and prompt.
+/// Returns an error if the request fails.
 #[tokio::main]
-pub async fn gen_embeddings(model:&str,prompt: &str) -> Result<(), reqwest::Error>{
-    let req = emb_request { 
+pub async fn gen_embeddings(model: &str, prompt: &str) -> Result<(), reqwest::Error> {
+    let req = EmbRequest {
         model: String::from(model),
         prompt: String::from(prompt),
     };
@@ -194,53 +100,29 @@ pub async fn gen_embeddings(model:&str,prompt: &str) -> Result<(), reqwest::Erro
         .send()
         .await?;
     let response_json: serde_json::Value = response.json().await?;
-    println!("{:#?}",response_json);
+    println!("{:#?}", response_json);
+    Ok(())
+}
+/// Lists available models.
+///
+/// Retrieves a list of available models from the server.
+/// Prints the response to standard output.
+/// Returns an error if the request fails.
+#[tokio::main]
+pub async fn list_models() -> Result<(), reqwest::Error> {
+    let response = reqwest::get("http://localhost:11434/api/ps").await?;
+    println!("{:#?}", response);
     Ok(())
 }
 
- /// Sends a request to list available models.
-    ///
-    /// # Errors
-    ///
-    /// Returns a `reqwest::Error` if the request fails.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use kazama::list_models;
-    ///
-    /// #[tokio::main]
-    /// async fn main() {
-    ///     list_models().await.expect("Failed to list models");
-    /// }
-    /// ```
+/// Performs a model push request.
+///
+/// Sends a request to push a model identified by `name`.
+/// Uses streaming mode if `stream_mode` is true.
+/// Returns an error if the request fails.
 #[tokio::main]
-pub async fn list_models() -> Result<(), reqwest::Error>{
-    let response = reqwest::get("http://localhost:11434/api/ps")
-        .await?;
-    println!("{:#?}",response);
-    Ok(())
-}
-
-   /// Sends a request to push a model with the specified name and stream mode.
-    ///
-    /// # Errors
-    ///
-    /// Returns a `reqwest::Error` if the request fails.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use kazama::push_models;
-    ///
-    /// #[tokio::main]
-    /// async fn main() {
-    ///     push_models("model_name", true).await.expect("Failed to push model");
-    /// }
-    /// ```
-#[tokio::main]
-pub async fn push_models(name: &str,stream_mode:bool) -> Result<(), reqwest::Error>{
-    let req = push_request { 
+pub async fn push_models(name: &str, stream_mode: bool) -> Result<(), reqwest::Error> {
+    let req = PushRequest {
         name: String::from(name),
         stream: stream_mode,
     };
@@ -250,8 +132,42 @@ pub async fn push_models(name: &str,stream_mode:bool) -> Result<(), reqwest::Err
         .send()
         .await?;
     let response_json: serde_json::Value = response.json().await?;
-    println!("{:#?}",response_json);
+    println!("{:#?}", response_json);
     Ok(())
 }
+/// Unit tests for the functions in this module.
+#[cfg(test)]
+mod tests{
 
+    use super::*;
+     /// Test for `chat_completion` function.
+    #[test]
+    fn chat_test(){
+        let _ = chat_completion("model_name", "Hello!", "user");
+    }
+/// Test for `pull_model` function.
+    #[test]
+    fn pull_test(){
+        // Example: Model Pull
+        let _ = pull_model("model_name", false);
+    }
+/// Test for `gen_embeddings` function.
+    #[test]
+    fn gen_embed_test(){
+        // Example: Generate Embeddings
+        let _ = gen_embeddings("model_name", "Generate embeddings from this prompt");
+    }
+/// Test for `list_models` function.
+    #[test]
+    fn listing(){
+        // Example: List Models
+        let _ = list_models();
+    }
+   /// Test for `push_models` function.
+    #[test]
+    fn pushing(){
+        // Example: Push Models
+        let _ = push_models("model_name", true);
+    }
+}
 
