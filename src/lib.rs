@@ -110,7 +110,7 @@ pub async fn gen_embeddings(model: &str, prompt: &str) -> Result<(), reqwest::Er
 /// Returns an error if the request fails.
 #[tokio::main]
 pub async fn list_models() -> Result<(), reqwest::Error> {
-    let response = reqwest::get("http://localhost:11434/api/ps").await?;
+    let response = reqwest::get("http://localhost:11434/api/tags").await?;
     println!("{:#?}", response);
     Ok(())
 }
